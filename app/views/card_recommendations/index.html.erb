@@ -1,5 +1,12 @@
+<h3>Recommendations</h3>
+<% if @cards.count > 0 %>
 <ul>
   <% @cards.each do |card| %>
     <li><%= link_to "#{card[0]} #{card[1].name}", card_path(card[1]) %> </li>
   <% end %>
 </ul>
+<% else %>
+
+  <p>No results. <span> <%=link_to( "Return home.", root_path )%> </span></p>
+
+<% end %>
