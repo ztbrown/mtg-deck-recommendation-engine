@@ -1,0 +1,14 @@
+<h2>Main Deck</h2>
+<ul>
+  <% @deck.main_deck.each do |card| %>
+    <li><%= card.name %> </li>
+  <% end %>
+</ul>
+
+<h2>Sideboard</h2>
+<ul>
+  <% @deck.sideboard.each do |card| %>
+    <li><%= card.name %> </li>
+  <% end %>
+</ul>
+

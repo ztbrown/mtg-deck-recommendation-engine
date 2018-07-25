@@ -1,0 +1,5 @@
+<ul>
+  <% @cards.each do |card| %>
+    <li><%= link_to "#{card[0]} #{card[1].name}", card_path(card[1]) %> </li>
+  <% end %>
+</ul>
