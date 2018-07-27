@@ -1,14 +1,15 @@
+<h1><%= @deck.name %></h1>
 <h2>Main Deck</h2>
 <ul>
   <% @deck.main_deck.each do |card| %>
-    <li><%= card.name %> </li>
+    <li><%= link_to card.name, card_path(card) %> </li>
   <% end %>
 </ul>
 
 <h2>Sideboard</h2>
 <ul>
   <% @deck.sideboard.each do |card| %>
-    <li><%= card.name %> </li>
+    <li><%= link_to card.name, card_path(card) %> </li>
   <% end %>
 </ul>
 
