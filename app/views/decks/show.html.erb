@@ -1,4 +1,4 @@
-<h1><%= @deck.name %></h1>
+<h1><%= link_to @deck.name, "http://www.mtgtop8.com/#{@deck.url}" %></h1>
 <h2>Main Deck</h2>
 <ul>
   <% @deck.main_deck.each do |card| %>
