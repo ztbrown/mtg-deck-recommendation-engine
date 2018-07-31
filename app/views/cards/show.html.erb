@@ -1,42 +1,203 @@
-<div class="container">
-  <div class="row">
-    <h3><%= @card.name %></h3>
-  </div>
-  <div class="row">
-    <%= image_for(@card.image_url) %>
-  </div>
-  <div class="row">
-    <p><%= @card.text %></p>
-  </div>
-  <div class="row">
-    <h3>Decks:</h3>
-  </div>
-  <div class="row">
-    <% @card.main_deck.each do |deck| %>
-      <p><%= link_to deck.name, deck_path(deck) %></p>
-    <% end %>
-  </div>
-  <div class="row">
-    <h3>Frequently main-decked with:</h3>
-  </div>
-  <div class="row">
-    <% @recommendations.each do |rec| %>
-      <% unless rec[1].id == @card.id %>
-        <div class="col-md-4">
-          <div class="card mb-4 box-shadow">
-            <%= image_for(rec[1].image_url, style: 'height: 100%; width: 100%;') %>
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center">
-                <p class="card-text"><%= rec[0] %> <%= rec[1].name %></p>
-                <div class="btn-group">
-                  <%= link_to 'View', card_path(rec[1].id), :class => "btn btn-sm btn-outline-secondary"%>
+  <script>
+    $(function () {
+      var set_ids = [];
+      $('#sidebarCollapse').on('click', function () {
+        $('#sidebar').toggleClass('active');
+      });
+
+      $('input[type="checkbox"]').on('click', function() {
+        var set_id = $(this).attr('data-id');
+        if (set_ids.includes(set_id)) {
+          var index = set_ids.indexOf(set_id);
+          set_ids.splice(index, 1);
+        }
+        else {
+          set_ids.push(set_id);
+        }
+        $('.recommendations').each(function(index) {
+          var sets = $(this).attr('data-sets').split(',')
+          console.log(sets)
+          console.log(sets.some(e => set_ids.includes(set_id)))
+          if (!sets.some(e => set_ids.includes(e))) {
+            $(this).hide();
+          }
+          else {
+            $(this).show();
+          }
+        });
+      });
+
+    });
+
+  </script>
+
+  <div class="wrapper">
+
+    <nav id="sidebar" class="active">
+      <div class="sidebar-header">
+        <h3>Refine by</h3>
+      </div>
+
+      <ul class="list-unstyled components">
+        <p>Set</p>
+        <li class="active">
+            <% @sets.each do |set| %>
+              <input type="checkbox" data-id="<%= set.id %>" data-name="<%=set.name%>"> <%= set.name %></br>
+            <% end %>
+        </li>
+      </ul>
+    </nav>
+    <div class="container" id="content">
+      <div class="row">
+        <div class="col-sm">
+          <button type="button" id="sidebarCollapse" class="btn btn-info">
+            <i class="fas fa-align-left"></i>
+            <span>Filter</span>
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <h3><%= @card.name %></h3>
+      </div>
+      <div class="row">
+        <%= image_for(@card.image_url) %>
+      </div>
+      <div class="row">
+        <p><%= @card.text %></p>
+      </div>
+      <div class="row">
+        <h3>Decks:</h3>
+      </div>
+      <div class="row">
+        <% @card.main_deck.each do |deck| %>
+          <p><%= link_to deck.name, deck_path(deck) %></p>
+        <% end %>
+      </div>
+      <div class="row">
+        <h3>Frequently main-decked with:</h3>
+      </div>
+      <div class="row">
+        <% @recommendations.each do |rec| %>
+          <% unless rec[1].id == @card.id %>
+            <div class="col-md-4 recommendations" data-sets="<%= rec[1].sets.map {|n| n.id}.join(',') %>">
+              <div class="card mb-4 box-shadow">
+                <%= image_for(rec[1].image_url, style: 'height: 100%; width: 100%;') %>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <p class="card-text"><%= rec[0] %> <%= rec[1].name %></p>
+                    <div class="btn-group">
+                      <%= link_to 'View', card_path(rec[1].id), :class => "btn btn-sm btn-outline-secondary"%>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      <% end %>
-    <% end %>
+          <% end %>
+        <% end %>
+      </div>
+
+    </div>
   </div>
-</div>
+<style type="text/css">
+.wrapper {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+}
+
+#sidebar {
+  min-width: 250px;
+  max-width: 250px;
+}
+
+#sidebar.active {
+  margin-left: -250px;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}
+
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+}
+
+p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1em;
+    font-weight: 300;
+    line-height: 1.7em;
+    color: #999;
+}
+
+a, a:hover, a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+#sidebar {
+    /* don't forget to add all the previously mentioned styles here too */
+    background: #7386D5;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #6d7fcc;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+}
+
+#sidebar ul p {
+    color: #fff;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+}
+#sidebar ul li a:hover {
+    color: #7386D5;
+    background: #fff;
+}
+
+#sidebar ul li.active > a, a[aria-expanded="true"] {
+    color: #fff;
+    background: #6d7fcc;
+}
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #6d7fcc;
+}
+</style>
+
 

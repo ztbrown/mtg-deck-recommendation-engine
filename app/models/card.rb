@@ -1,15 +1,19 @@
 class Card
   include Neo4j::ActiveNode
   has_many :in, :main_deck, type: :main_deck, model_class: :Deck
-  property :name 
+  has_many :in, :sets, type: :card, model_class: :CardSet
+  has_many :out, :sub_types, type: :subtypes, model_class: :Subtype
+  has_many :out, :super_types, type: :supertypes, model_class: :Supertype
+  has_many :out, :types, type: :types, model_class: :CardType
+  property :name
   property :mana_cost
   property :cmc
   property :colors
   property :rarity
   property :text
   property :flavor
-  property :layout 
-  property :names 
+  property :layout
+  property :names
   property :mana_cost
   property :cmc
   property :colors
