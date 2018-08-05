@@ -73,13 +73,13 @@
       </div>
       <div class="row">
         <% @recommendations.each do |rec| %>
-          <% unless rec[1].id == @card.id %>
-            <div class="col-md-4 recommendations" data-sets="<%= rec[1].sets.map(&:id).join(',') %>">
+          <% unless rec.c.id == @card.id %>
+            <div class="col-md-4 recommendations" data-sets="<%= rec.cardsets.map(&:id).join(',') %>">
               <div class="card mb-4 box-shadow">
                 <%= image_for(rec[1].image_url, style: 'height: 100%; width: 100%;') %>
                 <div class="card-body">
                   <div class="d-flex justify-content-between align-items-center">
-                    <p class="card-text"><%= rec[0] %> <%= rec[1].name %></p>
+                    <p class="card-text"><%= rec.strength %> <%= rec.c.name %></p>
                     <div class="btn-group">
                       <%= link_to 'View', card_path(rec[1].id), :class => "btn btn-sm btn-outline-secondary"%>
                     </div>
