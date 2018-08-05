@@ -16,13 +16,15 @@
         }
         $('.recommendations').each(function(index) {
           var sets = $(this).attr('data-sets').split(',')
-          console.log(sets)
-          console.log(sets.some(e => set_ids.includes(set_id)))
-          if (!sets.some(e => set_ids.includes(e))) {
-            $(this).hide();
-          }
-          else {
+          if (set_ids == undefined || set_ids.length == 0) {
             $(this).show();
+          } else {
+            if (!sets.some(e => set_ids.includes(e))) {
+              $(this).hide();
+            }
+            else {
+              $(this).show();
+            }
           }
         });
       });
@@ -65,21 +67,14 @@
       <div class="row">
         <p><%= @card.text %></p>
       </div>
-      <div class="row">
-        <h3>Decks:</h3>
-      </div>
-      <div class="row">
-        <% @card.main_deck.each do |deck| %>
-          <p><%= link_to deck.name, deck_path(deck) %></p>
-        <% end %>
-      </div>
+
       <div class="row">
         <h3>Frequently main-decked with:</h3>
       </div>
       <div class="row">
         <% @recommendations.each do |rec| %>
           <% unless rec[1].id == @card.id %>
-            <div class="col-md-4 recommendations" data-sets="<%= rec[1].sets.map {|n| n.id}.join(',') %>">
+            <div class="col-md-4 recommendations" data-sets="<%= rec[1].sets.map(&:id).join(',') %>">
               <div class="card mb-4 box-shadow">
                 <%= image_for(rec[1].image_url, style: 'height: 100%; width: 100%;') %>
                 <div class="card-body">
@@ -95,7 +90,14 @@
           <% end %>
         <% end %>
       </div>
-
+      <div class="row">
+        <h3>Decks:</h3>
+      </div>
+      <div class="row">
+        <% @card.main_deck.each do |deck| %>
+          <p><%= link_to deck.name, deck_path(deck) %></p>
+        <% end %>
+      </div>
     </div>
   </div>
 <style type="text/css">

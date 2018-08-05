@@ -4,7 +4,6 @@ class Card
   has_many :in, :sets, type: :card, model_class: :CardSet
   has_many :out, :sub_types, type: :subtypes, model_class: :Subtype
   has_many :out, :super_types, type: :supertypes, model_class: :Supertype
-  has_many :out, :types, type: :types, model_class: :CardType
   property :name
   property :mana_cost
   property :cmc
@@ -50,5 +49,8 @@ class Card
   property :id
   property :set_name
   property :color_identity
+
+  def recommendations
+  end
 end
 
