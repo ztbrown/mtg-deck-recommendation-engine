@@ -1,11 +1,39 @@
   <script>
     $(function () {
       var set_ids = [];
+      var type_ids = [];
+      
+      var checkVisibility = {
+        shouldBeVisible: function(ids, collection) {
+          return ((ids == undefined) || (collection == undefined) || (ids.length == 0) || (collection.some(e => ids.includes(e))));
+        }
+      }
+
+      function toggleRecommendationVisibility(element) {
+        var sets = $(element).attr('data-sets').split(',');
+        var types = $(element).attr('data-types').split(',');
+        (checkVisibility.shouldBeVisible(set_ids, sets) && checkVisibility.shouldBeVisible(type_ids, types)) ? $(element).show() : $(element).hide(); 
+      }
+
       $('#sidebarCollapse').on('click', function () {
         $('#sidebar').toggleClass('active');
       });
 
-      $('input[type="checkbox"]').on('click', function() {
+      $('input[type="checkbox"].type').on('click', function() {
+        var type_id = $(this).attr('data-id');
+        if (type_ids.includes(type_id)) {
+          var index = type_ids.indexOf(type_id);
+          type_ids.splice(index, 1);
+        }
+        else {
+          type_ids.push(type_id);
+        }
+        $('.recommendations').each(function(index) {
+          toggleRecommendationVisibility(this)
+        });
+      });
+
+      $('input[type="checkbox"].set').on('click', function() {
         var set_id = $(this).attr('data-id');
         if (set_ids.includes(set_id)) {
           var index = set_ids.indexOf(set_id);
@@ -15,17 +43,7 @@
           set_ids.push(set_id);
         }
         $('.recommendations').each(function(index) {
-          var sets = $(this).attr('data-sets').split(',')
-          if (set_ids == undefined || set_ids.length == 0) {
-            $(this).show();
-          } else {
-            if (!sets.some(e => set_ids.includes(e))) {
-              $(this).hide();
-            }
-            else {
-              $(this).show();
-            }
-          }
+          toggleRecommendationVisibility(this)
         });
       });
 
@@ -41,10 +59,18 @@
       </div>
 
       <ul class="list-unstyled components">
+        <p>Type</p>
+        <li class="active">
+            <% @types.each do |type| %>
+              <input type="checkbox" class="type" data-id="<%= type.id %>" data-name="<%=type.name%>"> <%= type.name %></br>
+            <% end %>
+        </li>
+      </ul>
+      <ul class="list-unstyled components">
         <p>Set</p>
         <li class="active">
             <% @sets.each do |set| %>
-              <input type="checkbox" data-id="<%= set.id %>" data-name="<%=set.name%>"> <%= set.name %></br>
+              <input type="checkbox" class="set" data-id="<%= set.id %>" data-name="<%=set.name%>"> <%= set.name %></br>
             <% end %>
         </li>
       </ul>
@@ -74,7 +100,7 @@
       <div class="row">
         <% @recommendations.each do |rec| %>
           <% unless rec.c.id == @card.id %>
-            <div class="col-md-4 recommendations" data-sets="<%= rec.cardsets.map(&:id).join(',') %>">
+            <div class="col-md-4 recommendations" data-types="<%= rec.cardtypes.map(&:id).join(',') %>" data-sets="<%= rec.cardsets.map(&:id).join(',') %>">
               <div class="card mb-4 box-shadow">
                 <%= image_for(rec[1].image_url, style: 'height: 100%; width: 100%;') %>
                 <div class="card-body">

@@ -6,8 +6,9 @@ class CardsController < ApplicationController
 
   def show
     @card
-    @recommendations = Neo4j::ActiveBase.current_session.query("MATCH (card:Card {id: \"#{@card.id}\" })<-[:main_deck]-(d)-[r:main_deck]->(c) WITH c, count(c) as strength OPTIONAL MATCH(c)<-[:card]-(s:CardSet) RETURN c, collect(s) as cardsets, strength ORDER BY strength DESC").to_a
-    @sets = @recommendations.map {|a| a[2]}.flatten!.uniq.sort {|a,b| a.name <=> b.name}
+    @recommendations = Neo4j::ActiveBase.current_session.query("MATCH (card:Card {id: \"#{@card.id}\" })<-[:main_deck]-(d)-[r:main_deck]->(c) WITH c, count(c) as strength OPTIONAL MATCH(c)<-[:card]-(s:CardSet) OPTIONAL MATCH(c)-[:types]->(types:CardType) RETURN c, collect(s) as cardsets, collect(types) as cardtypes, strength ORDER BY strength DESC").to_a
+    @sets = @recommendations.map {|a| a.cardsets }.flatten!.uniq.sort {|a,b| a.name <=> b.name}
+    @types = @recommendations.map {|a| a.cardtypes }.flatten!.uniq.sort {|a,b| a.name <=> b.name}
   end
 
   private
