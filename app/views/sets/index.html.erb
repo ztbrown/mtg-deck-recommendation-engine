@@ -1,0 +1,6 @@
+<h3>Sets</h3>
+<ul>
+  <% @sets.each do |set| %>
+    <li><%=link_to set.name, set_path(set.id) %></li>
+  <% end %>
+</ul>
