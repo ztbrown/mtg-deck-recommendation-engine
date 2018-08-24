@@ -2,6 +2,10 @@ class CardsController < ApplicationController
   before_action :set_card, only: :show
   def index
     @cards = Card.all(:c).where("c.name =~ {name}").params(name: "(?i).*#{params[:card]}.*").pluck(:c)
+    respond_to do |format|
+      format.html
+      format.json {render json: @cards}
+    end
   end
 
   def show
