@@ -1,0 +1,83 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md">
+      <h2>Deck Guesser</h2>
+      <p>Add cards to the input below to see the decks that match.</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md">
+      <input type="text" id="input-cards" class="selectized">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md">
+      <div class="list-group">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  $(function() {
+    add_decks = function(data) {
+      data.forEach(function(item){
+        $('.list-group').append(`
+          <a href='decks/${item.d.deck.id}' class='list-group-item list-group-item-action flex-column align-items-start'>
+          <div class='d-flex w-100 justify-content-between'>
+          <h5 class='mb-1'>${item.d.deck.name}</h5>
+          <small>${item.Strength}% match</small>
+          </div>
+          <p class='mb-1'></p>
+          <small></small>
+        </a>`)
+      });
+    }
+
+    $('#input-cards').on("change", function(){
+      cards = $("#input-cards").val().split(",").map(x => encodeURIComponent(x)).join('&cards[]=');
+      $.ajax({
+        url: 'deck_search?&cards[]=' + cards,
+        type: 'GET',
+        dataType: 'json',
+        error: function() {
+          callback();
+        },
+        success: function(res) {
+          console.log(res);
+          $('.list-group').empty();
+          add_decks(res);
+        }
+      });
+    })
+
+    $('#input-cards').selectize({
+      valueField: 'id',
+      labelField: 'name',
+      searchField: ['name'],
+      options: [],
+      create: false,
+      render: {
+        option: function(data, escape) {
+          return '<div>' + escape(data.name) + '</div>';
+        }
+      },
+      load: function(query, callback) {
+        if (!query.length) return callback();
+        $.ajax({
+          url: 'cards?&card=' + encodeURIComponent(query),
+          type: 'GET',
+          dataType: 'json',
+          error: function() {
+            callback();
+          },
+          success: function(res) {
+            callback(res.map(x => x.card));
+          }
+        });
+      }
+    });
+  });
+</script>
+
