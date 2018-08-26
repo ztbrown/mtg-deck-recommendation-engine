@@ -2,23 +2,17 @@
     $(function () {
       var set_ids = [];
       var type_ids = [];
-      
+
       var checkVisibility = {
         shouldBeVisible: function(ids, collection) {
           return ((ids == undefined) || (collection == undefined) || (ids.length == 0) || (collection.some(e => ids.includes(e))));
         }
       }
-
       function toggleRecommendationVisibility(element) {
         var sets = $(element).attr('data-sets').split(',');
         var types = $(element).attr('data-types').split(',');
-        (checkVisibility.shouldBeVisible(set_ids, sets) && checkVisibility.shouldBeVisible(type_ids, types)) ? $(element).show() : $(element).hide(); 
+        (checkVisibility.shouldBeVisible(set_ids, sets) && checkVisibility.shouldBeVisible(type_ids, types)) ? $(element).show() : $(element).hide();
       }
-
-      $('#sidebarCollapse').on('click', function () {
-        $('#sidebar').toggleClass('active');
-      });
-
       $('input[type="checkbox"].type').on('click', function() {
         var type_id = $(this).attr('data-id');
         if (type_ids.includes(type_id)) {
@@ -32,7 +26,6 @@
           toggleRecommendationVisibility(this)
         });
       });
-
       $('input[type="checkbox"].set').on('click', function() {
         var set_id = $(this).attr('data-id');
         if (set_ids.includes(set_id)) {
@@ -46,9 +39,7 @@
           toggleRecommendationVisibility(this)
         });
       });
-
     });
-
   </script>
 
   <div class="wrapper">
@@ -76,14 +67,6 @@
       </ul>
     </nav>
     <div class="container" id="content">
-      <div class="row">
-        <div class="col-sm">
-          <button type="button" id="sidebarCollapse" class="btn btn-info">
-            <i class="fas fa-align-left"></i>
-            <span>Filter</span>
-          </button>
-        </div>
-      </div>
       <div class="row">
         <h3><%= @card.name %></h3>
       </div>
@@ -138,29 +121,12 @@
   max-width: 250px;
 }
 
-#sidebar.active {
-  margin-left: -250px;
-}
-
-a[data-toggle="collapse"] {
-    position: relative;
-}
-
 .dropdown-toggle::after {
     display: block;
     position: absolute;
     top: 50%;
     right: 20px;
     transform: translateY(-50%);
-}
-
-@media (max-width: 768px) {
-    #sidebar {
-        margin-left: -250px;
-    }
-    #sidebar.active {
-        margin-left: 0;
-    }
 }
 
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
