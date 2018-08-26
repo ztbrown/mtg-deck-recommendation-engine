@@ -1,3 +1,14 @@
+<style>
+  .in-deck-card {
+    color: green;
+  }
+
+  .not-in-deck-card {
+    color: red;
+    text-decoration: line-through;
+  }
+</style>
+
 <div class="container">
   <div class="row">
     <div class="col-md">
@@ -20,8 +31,25 @@
 </div>
 
 <script>
+
+  var deck_card = function(card_name) {
+    return `
+    <li class="in-deck-card">
+      ${card_name}
+    </li>
+    `;
+  }
+
+  var not_in_deck_card = function(card_name) {
+    return `
+    <li class="not-in-deck-card">
+      ${card_name}
+    </li>
+    `;
+  }
+
   $(function() {
-    add_decks = function(data) {
+    add_decks = function(data, searched_cards) {
       data.forEach(function(item){
         $('.list-group').append(`
           <a href='decks/${item.d.deck.id}' class='list-group-item list-group-item-action flex-column align-items-start'>
@@ -29,6 +57,9 @@
           <h5 class='mb-1'>${item.d.deck.name}</h5>
           <small>${item.Strength}% match</small>
           </div>
+          <ul class='mb-1'>
+            ${searched_cards.map(card => item.deck_cards.includes(card) ? deck_card(card) : not_in_deck_card(card)).join('')}
+          </ul>
           <p class='mb-1'></p>
           <small></small>
         </a>`)
@@ -47,7 +78,8 @@
         success: function(res) {
           console.log(res);
           $('.list-group').empty();
-          add_decks(res);
+          searched_cards = $.map($(".selectize-input .item"), function(item){ return $(item).text()} );
+          add_decks(res, searched_cards);
         }
       });
     })
