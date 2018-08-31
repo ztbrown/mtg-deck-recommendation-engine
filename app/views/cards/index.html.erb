@@ -1,12 +1,71 @@
-<h3>Results</h3>
-<% if @cards.count > 0 %>
-<ul>
-  <% @cards.each do |card| %>
-    <li><%= link_to card.name, card_path(card) %> </li>
+<div class="container" >
+  <h3>Results</h3>
+  <% if @cards.count > 0 %>
+    <ul class="cards-list">
+      <% @cards.each do |card| %>
+        <li><%= link_to card.name, card_path(card) %> </li>
+      <% end %>
+    </ul>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        
+        <li class="previous-nav page-item <%= "invisible" if @page == 1 %>"><a class="page-link" href="#">Previous</a></li>
+        <% @pages.times.each do |page| %>
+          <li class="page-item"><a class="page-link" href="#"><%= page + 1 %></a></li>
+        <% end %>
+        <li class="next-nav page-item <%= "invisible" if @page == @pages %>"><a class="page-link" href="#">Next</a></li>
+      </ul>
+    </nav>
+  <% else %>
+
+    <p>No results. <span> <%=link_to( "Return home.", root_path )%> </span></p>
+
   <% end %>
-</ul>
-<% else %>
+</div>
+<script>
 
-  <p>No results. <span> <%=link_to( "Return home.", root_path )%> </span></p>
+var currentPage = <%= @page %>
 
-<% end %>
+var renderListItem = function(item) {
+  return `
+    <li><a href="/cards/${item.card.id}">${item.card.name}</a></li>
+  `
+}
+
+var renderView = function(response) {
+  $('.cards-list').empty();
+  response.forEach(x => $('.cards-list').append(renderListItem(x)))
+  if (currentPage == 1) {
+    $('.previous-nav').addClass('invisible'); 
+  } else {
+    $('.previous-nav').removeClass('invisible');
+  } 
+  if (currentPage == <%= @pages %>) {
+    $('.next-nav').addClass('invisible'); 
+  } else {
+    $('.next-nav').removeClass('invisible');
+  }
+};
+
+$(function(){
+
+  $('.page-link').on("click", function(e, item) {
+    e.preventDefault(); 
+    navigateTo = this.text;
+    if (this.text == 'Next') {
+      navigateTo = currentPage + 1;
+    } else if (this.text == 'Previous') {
+      navigateTo = currentPage - 1;
+    }
+    $.ajax({
+      url: "cards?page=" + navigateTo,
+      dataType: 'json',
+      success: function(res) {
+        currentPage = parseInt(navigateTo);
+        renderView(res);
+      }
+    });
+  });
+
+})
+</script>

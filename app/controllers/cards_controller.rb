@@ -1,10 +1,19 @@
 class CardsController < ApplicationController
   before_action :set_card, only: :show
   def index
-    @cards = Card.all(:c).where("c.name =~ {name}").params(name: "(?i).*#{params[:card]}.*").pluck(:c)
+    @page = params[:page] || 1
+    @cards = Card.page(@page).per(50).order(:name).all(:c).where("c.name =~ {name}").params(name: "(?i).*#{params[:card]}.*").pluck(:c)
+    @pages = (Card.count / 50) + 1
     respond_to do |format|
       format.html
-      format.json {render json: @cards}
+      format.json {render json: @cards }
+    end
+  end
+
+  def search
+    @cards = Card.all(:c).where("c.name =~ {name}").params(name: "(?i).*#{params[:card]}.*").pluck(:c)
+    respond_to do |format| 
+      format.json {render json: @cards }
     end
   end
 
